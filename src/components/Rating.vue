@@ -10,57 +10,55 @@
 </template>
 
 <script>
-   
-   export default {
-      name: 'Rating',
-      data() {
-         return {
-            starArr: [],
-            info: ''
-         }
-      },
-      props: {
-         rate: {
-            type: Number,
-            default: 0
-         }
-      },
-      watch: {
-         rate(val) {
-            
-         }
-      },
-      methods: {
-         pushStarVal(str, N) {
-            for ( let i = 1; i <= N; i++ ) {
-               this.starArr.push(str)
-            }
-         },
-         setStarIcon(str) {
-            if (str === 'full') return 'fas fa-star'
-            else if (str === 'half') return 'fas fa-star-half'
-            else return 'far fa-star'
-         }
-      },
-      mounted() {
-         this.info = 'watch'
-         let maxStar = 5
-         let mainNum = this.rate * .5
-         let lowerNum = parseInt(mainNum)
-         let upperNum = lowerNum + 1
-         
-         this.pushStarVal('full', lowerNum)
-         maxStar = maxStar - lowerNum
-         
-         if ( mainNum > lowerNum && mainNum < upperNum) {
-            this.pushStarVal('half', 1)
-            maxStar = maxStar - 1
-         }
-         
-         this.pushStarVal('empty', maxStar)
+import { computed } from 'vue';
+
+export default {
+  name: 'Rating',
+  props: {
+    rate: {
+      type: Number,
+      default: 0,
+    },
+  },
+  setup(props) {
+    const starArr = computed(() => {
+      const maxStar = 5;
+      const mainNum = props.rate * 0.5;
+      const lowerNum = Math.floor(mainNum);
+      const upperNum = lowerNum + 1;
+      const arr = [];
+
+      for (let i = 1; i <= lowerNum; i++) {
+        arr.push('full');
       }
-   }
-   
+
+      if (mainNum > lowerNum && mainNum < upperNum) {
+        arr.push('half');
+      }
+
+      for (let i = arr.length + 1; i <= maxStar; i++) {
+        arr.push('empty');
+      }
+
+      return arr;
+    });
+
+    const setStarIcon = (str) => {
+      if (str === 'full') {
+        return 'fas fa-star';
+      } else if (str === 'half') {
+        return 'fas fa-star-half';
+      } else {
+        return 'far fa-star';
+      }
+    };
+
+    return {
+      starArr,
+      setStarIcon,
+    };
+  },
+};
 </script>
 
 <style lang="scss">

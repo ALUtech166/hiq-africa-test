@@ -1,12 +1,12 @@
 <template>
-   <section v-if="isWaiting" class="waiting">
-      <div class="waiting-box">
-         <strong>Please wait, fetching data from server</strong>
-         <i class="fa fa-smile-beam" ></i>
-      </div>
+   <section v-if="isWaiting" class="flex justify-center items-center h-screen">
+     <div class="bg-white rounded-lg p-8">
+       <h2 class="text-lg font-bold mb-4">Please wait, fetching data from server</h2>
+       <i class="far fa-smile-beam text-5xl text-indigo-500"></i>
+     </div>
    </section>
-</template>
-
+ </template>
+ 
 <script>
    
    export default {

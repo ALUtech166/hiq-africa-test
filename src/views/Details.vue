@@ -39,59 +39,74 @@
 </template>
 
 <script>
-   
-   import axios from 'axios'
-   import Nav from '../components/Back.vue'
-   import Rating from '../components/Rating.vue'
-   import Button from '../components/Button.vue'
-   import Waiting from '../components/Waiting.vue'
-   import API from '../apiKey.js'
-   
-   export default {
-      name: 'Details',
-      components: {
-         Nav,
-         Rating,
-         Button,
-         Waiting
+import axios from 'axios';
+import Nav from '../components/Back.vue';
+import Rating from '../components/Rating.vue';
+import Button from '../components/Button.vue';
+import Waiting from '../components/Waiting.vue';
+import API from '../apiKey.js';
+
+export default {
+  name: 'Details',
+
+  components: {
+    Nav,
+    Rating,
+    Button,
+    Waiting,
+  },
+
+  data() {
+    return {
+      errResponse: false,
+      movie: {
+        IdMovie: '',
+        Poster: '',
+        Title: '',
+        Year: '',
+        Genre: '',
+        Runtime: '',
+        Rating: '',
+        Plot: '',
+        Production: '',
+        Actors: '',
+        Type: '',
       },
-      data() {
-         return {
-            errResponse: false,
-            movie: {},
-            endPoint: API.omdb.endPoint,
-            key: API.omdb.key,
-            isWaiting: true,
-         }
-      },
-      mounted() {
-         let idMovie = this.$route.params.idMovie
-         let url = `${this.endPoint}?apikey=${this.key}&i=${idMovie}`
-         
-         axios.get(url)
-            .then( res => {
-               
-               let movie = this.movie
-               let info = res.data
-               movie.IdMovie = info.imdbID
-               movie.Poster = info.Poster
-               movie.Title = info.Title
-               movie.Year = info.Year
-               movie.Genre = info.Genre
-               movie.Runtime = info.Runtime
-               movie.Rating = info.imdbRating
-               movie.Plot = info.Plot
-               movie.Production = info.Production
-               movie.Actors = info.Actors
-               movie.Type = info.Type
-               
-               this.isWaiting = false
-            })
-            .catch( err => console.log(err))
-      }
-   }
-   
+      endPoint: API.omdb.endPoint,
+      key: API.omdb.key,
+      isWaiting: true,
+    };
+  },
+
+  mounted() {
+    const idMovie = this.$route.params.idMovie;
+    const url = `${this.endPoint}?apikey=${this.key}&i=${idMovie}`;
+
+    axios.get(url)
+      .then((res) => {
+        const info = res.data;
+        this.movie = {
+          IdMovie: info.imdbID,
+          Poster: info.Poster,
+          Title: info.Title,
+          Year: info.Year,
+          Genre: info.Genre,
+          Runtime: info.Runtime,
+          Rating: info.imdbRating,
+          Plot: info.Plot,
+          Production: info.Production,
+          Actors: info.Actors,
+          Type: info.Type,
+        };
+        this.isWaiting = false;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+};
 </script>
+
 
 <style lang="scss">
    .back {

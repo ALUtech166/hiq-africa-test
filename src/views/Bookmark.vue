@@ -40,65 +40,55 @@
 </template>
 
 <script>
+import Nav from '../components/Back.vue'
+import 'vuejs-noty/dist/vuejs-noty.css'
 
-   import Nav from '../components/Back.vue'
-   import 'vuejs-noty/dist/vuejs-noty.css'
+export default {
+  name: 'Bookmark',
+  components: {
+    Nav
+  },
+  data() {
+    return {
+      listBookmarks: [],
+      deleteTrig: true,
+      isEmptyList: false
+    }
+  },
+  mounted() {
+    this.renderBookmark()
+  },
+  methods: {
+    deleteItem(id) {
+      let local = JSON.parse(localStorage.getItem('listBookmark_omdb'))
+      local.bookmark = local.bookmark.filter(item => item.IdMovie !== id)
+      localStorage.setItem('listBookmark_omdb', JSON.stringify(local))
+      this.deleteTrig = !this.deleteTrig
+      this.$noty.success('Your profile has been saved!', { layout: 'topRight' })
+    },
+    renderBookmark() {
+      const local = localStorage.getItem('listBookmark_omdb')
+      if (local) {
+        this.listBookmarks = JSON.parse(local).bookmark
 
-   export default {
-      name: 'Bookmark',
-      components: {
-         Nav
-      },
-      data() {
-         return {
-            listBookmarks: {},
-            deleteTrig: true,
-            isEmptyList: false
-         }
-      },
-      mounted() {
-         this.renderBookmark()
-      },
-      methods: {
-         deleteItem(id) {
-
-            let local = JSON.parse(localStorage.getItem('listBookmark_omdb'))
-            local.bookmark.forEach( (item, index) => {
-               if ( item.IdMovie == id ) {
-                  local.bookmark.splice(index, 1)
-                  localStorage.setItem('listBookmark_omdb', JSON.stringify(local))
-                  this.deleteTrig = !this.deleteTrig
-                  
-               }
-               return this.$noty.success("Your profile has been saved!", {
-                     layout: 'topRight'
-               })
-               
-            })
-         },
-         renderBookmark() {
-            let local = localStorage.getItem('listBookmark_omdb')
-            if (local) {
-               this.listBookmarks = JSON.parse(local).bookmark
-              
-               if (this.listBookmarks.length == 0) {
-                  this.isEmptyList = true
-               }
-            } else {
-               this.isEmptyList = true
-            }
-         }
-      },
-      watch: {
-         deleteTrig() {
-            setTimeout(() => {
-               this.renderBookmark()
-            }, 500)
-         }
+        if (this.listBookmarks.length === 0) {
+          this.isEmptyList = true
+        }
+      } else {
+        this.isEmptyList = true
       }
-   }
-   
+    }
+  },
+  watch: {
+    deleteTrig() {
+      setTimeout(() => {
+        this.renderBookmark()
+      }, 500)
+    }
+  }
+}
 </script>
+
 
 <style lang="scss">
         .back {

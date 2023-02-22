@@ -20,7 +20,7 @@
       <input
         v-model="keyWord"
         v-on:keyup.enter="getData"
-        type="text" placeholder="Type title here" 
+        type="text" placeholder="Type  your movies title here" 
         class=" font-bold relative m-0 -mr-px block w-[1%] min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-clip-padding px-3 py-1.5 text-base text-md text-black outline-none transition duration-300 ease-in-out focus:border-primary focus:text-black focus:shadow-te-primary focus:outline-none dark:text-black dark:placeholder:text-black"
         aria-label="Search"
         aria-describedby="button-addon1" />
@@ -65,98 +65,100 @@
 </template>
 
 <script>
-   import axios from 'axios'
-   import Card from '../components/Card.vue'
-   import EmptyState from '../components/EmptyState.vue'
-   import API from '../apiKey.js'
-   
-   export default {
-      name: 'Home',
-      data() {
-         return {
-            categorys: [
-               {name: 'Movie', id: 1},
-               {name: 'Episode', id: 2},
-               {name: 'Series', id: 3}
-            ],
-            bookmarkCount: 0,
-            badgeActive: 'Movie',
-            keyWord: '',
-            keyWordText: '',
-            response: '',
-            responseStatus: 'true',
-            isEmptyState: true,
-            showEmptyState: true,
-            isLoad: false,
-            errorMsg: null,
-            key: API.omdb.key,
-            endPoint: API.omdb.endPoint
-         }
-      },
-      components: {
-         Card,
-         EmptyState
-      },
-      watch: {
-        responseStatus(val) {
-           if ( val === 'False' ) {
-              this.isEmptyState = false
-              this.showEmptyState = true
-           }  
-           else this.showEmptyState = false
-        } 
-      },
-      mounted(){
-        if ( localStorage.getItem('listMovie_omdb') ) {
-           this.response = JSON.parse(localStorage.getItem('listMovie_omdb'))
-           this.responseStatus = 'True'
-           this.keyWordText = localStorage.getItem('lastKeyWord_omdb')
-        }
-        
-        if ( localStorage.getItem('listBookmark_omdb') ) {
-           let bookmark = JSON.parse(localStorage.getItem('listBookmark_omdb')).bookmark
-           this.bookmarkCount = bookmark.length
+  import axios from 'axios';
+  import Card from '../components/Card.vue';
+  import EmptyState from '../components/EmptyState.vue';
+  import API from '../apiKey.js';
+
+  export default {
+    name: 'Home',
+
+    components: {
+      Card,
+      EmptyState,
+    },
+
+    data() {
+      return {
+        bookmarkCount: 0,
+        badgeActive: 'Movie',
+        keyWord: '',
+        keyWordText: '',
+        response: '',
+        responseStatus: 'true',
+        isEmptyState: true,
+        showEmptyState: true,
+        isLoad: false,
+        errorMsg: null,
+        key: API.omdb.key,
+        endPoint: API.omdb.endPoint,
+      };
+    },
+
+    watch: {
+      responseStatus(val) {
+        if (val === 'False') {
+          this.isEmptyState = false;
+          this.showEmptyState = true;
+        } else {
+          this.showEmptyState = false;
         }
       },
-      methods: {
-         getData() {
-            const validKeyWord = this.keyWord.split(' ').join('+')
-            if (validKeyWord.split('').length > 0) {
-               
-               this.showLoader(true)
-               axios.
-                  get(`${this.endPoint}?apikey=${this.key}&s=${validKeyWord}&type=${this.badgeActive}`)
-                     .then( res =>  {
-                        this.response = res.data.Search
-                        this.responseStatus = res.data.Response
-                        this.keyWordText = this.keyWord
-                        
-                        this.showLoader(false)
-                        
-                        if (this.responseStatus === 'True') {
-                           localStorage.setItem('listMovie_omdb', JSON.stringify(res.data.Search))
-                           localStorage.setItem('lastKeyWord_omdb', this.keyWord)
-                        }
-                        
-                        })
-                     .catch( err => this.errorMsg = err)
-            }
-         },
-         showLoader(show) {
-            if (show) {   
-               this.showEmptyState = true
-               this.isLoad = true
-            } else {
-               this.showEmptyState = false
-               this.isLoad = false
-            }   
-         },
-         badgeClick(name) {
-            this.badgeActive = name
-            this.getData()
-         }
+    },
+
+    mounted() {
+      if (localStorage.getItem('listMovie_omdb')) {
+        this.response = JSON.parse(localStorage.getItem('listMovie_omdb'));
+        this.responseStatus = 'True';
+        this.keyWordText = localStorage.getItem('lastKeyWord_omdb');
       }
-   }
+
+      if (localStorage.getItem('listBookmark_omdb')) {
+        const bookmark = JSON.parse(localStorage.getItem('listBookmark_omdb')).bookmark;
+        this.bookmarkCount = bookmark.length;
+      }
+    },
+
+    methods: {
+      async getData() {
+        const validKeyWord = this.keyWord.split(' ').join('+');
+        if (validKeyWord.split('').length > 0) {
+          this.showLoader(true);
+
+          try {
+            const res = await axios.get(`${this.endPoint}?apikey=${this.key}&s=${validKeyWord}&type=${this.badgeActive}`);
+
+            this.response = res.data.Search;
+            this.responseStatus = res.data.Response;
+            this.keyWordText = this.keyWord;
+            this.showLoader(false);
+
+            if (this.responseStatus === 'True') {
+              localStorage.setItem('listMovie_omdb', JSON.stringify(res.data.Search));
+              localStorage.setItem('lastKeyWord_omdb', this.keyWord);
+            }
+          } catch (err) {
+            this.errorMsg = err;
+          }
+        }
+      },
+
+      showLoader(show) {
+        if (show) {
+          this.showEmptyState = true;
+          this.isLoad = true;
+        } else {
+          this.showEmptyState = false;
+          this.isLoad = false;
+        }
+      },
+
+      badgeClick(name) {
+        this.badgeActive = name;
+        this.getData();
+      },
+    },
+  };
 </script>
 
 <style lang="scss">

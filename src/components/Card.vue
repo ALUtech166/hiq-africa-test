@@ -21,32 +21,31 @@
 </template>
 
 <script>
-   
-   export default {
-      name: 'Card',
-      inheritAttrs: false,
-      props: {
-         title: {
-            type: String,
-            default: 'Iron Man 3'
-         },
-         year: {
-            type: String,
-            default: '2013'
-         },
-         type: {
-           type: String,
-           default: 'Movie'
-         },
-         idMovie: {
-            type: String
-         },
-         poster: {
-            type: String,
-            default: 'src/assets/poster.jpeg'
-         }
+  export default {
+    name: 'Card',
+    props: {
+      title: {
+        type: String,
+        default: 'Iron Man 3'
+      },
+      year: {
+        type: String,
+        default: '2013'
+      },
+      type: {
+        type: String,
+        default: 'Movie'
+      },
+      idMovie: {
+        type: String,
+        required: true
+      },
+      poster: {
+        type: String,
+        default: 'src/assets/poster.jpeg'
       }
-   }
+    }
+  }
 </script>
 
 <style lang="scss" >
